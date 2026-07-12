@@ -197,6 +197,29 @@ summary::after{content:"+";font-family:'Fraunces',serif;font-size:22px;color:var
 details[open] summary::after{transform:rotate(45deg)}
 details p{margin-top:12px;font-size:14.5px;color:var(--ink-mid);max-width:62ch}
 
+
+/* ── nav cta pair ── */
+.nav-cta{display:flex;gap:10px;align-items:center}
+@media(max-width:560px){.nav-cta .btn-ghost{display:none}}
+
+/* ── desktop login link (hero) ── */
+.desk-login{display:inline-flex;align-items:center;gap:7px;margin-top:14px;font-size:13.5px;font-weight:500;color:var(--cu)}
+.desk-login .arr{transition:transform .2s ease}
+.desk-login:hover{text-decoration:underline;text-underline-offset:4px}
+.desk-login:hover .arr{transform:translateX(4px)}
+
+/* ── refined pizzazz ── */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+.gap,.seg,.loopcard,.plan,.theme-tile,.loop-card{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,opacity .7s ease}
+.gap:hover,.seg:hover,.loopcard:hover,.plan:hover,.theme-tile:hover,.loop-card:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-lg);border-color:rgba(var(--cu-rgb),.45)}
+.btn-cu{position:relative;overflow:hidden}
+.btn-cu::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-20deg);transition:left .55s ease;pointer-events:none}
+.btn-cu:hover::after{left:130%}
+@keyframes tick-pop{0%{transform:scale(.55)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.ph-card.done .ph-tick{animation:tick-pop .45s ease}
+
 /* cta + footer */
 .final{text-align:center;padding:110px 0}
 .final h2{margin-bottom:14px}
@@ -218,9 +241,11 @@ footer a:hover{color:var(--ink)}
       <a href="#loop">The Loop</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a href="https://jackrowe33-stack.github.io/thestack/" target="_blank" rel="noopener">Login</a>
     </nav>
-    <a href="#pricing" class="btn btn-cu">Get the app</a>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="https://jackrowe33-stack.github.io/thestack/" target="_blank" rel="noopener">Open in browser</a>
+      <a href="#pricing" class="btn btn-cu">Get the app</a>
+    </div>
   </div>
 </header>
 
@@ -236,6 +261,7 @@ footer a:hover{color:var(--ink)}
         <a class="btn btn-ghost" href="#pricing">Get it on Android</a>
       </div>
       <p class="store-note">Free to start. No account required on the free plan.</p>
+      <a class="desk-login" href="https://jackrowe33-stack.github.io/thestack/" target="_blank" rel="noopener">Already stacking? Open The Stack in your browser <span class="arr">&#8594;</span></a>
     </div>
     <div class="phone-col">
       <div>
@@ -562,7 +588,7 @@ footer a:hover{color:var(--ink)}
   <div class="wrap frow">
     <span class="logo" style="font-size:16px">The <em>Stack</em></span>
     <div class="flinks">
-      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a>
+      <a href="legal/privacy.html">Privacy</a><a href="legal/terms.html">Terms</a><a href="legal/medical-disclaimer.html">Medical disclaimer</a><a href="mailto:support@thestack.app">Support</a>
     </div>
     <span>© 2026 The Stack. Made in Melbourne.</span>
   </div>
@@ -622,6 +648,36 @@ if('IntersectionObserver'in window){
   cards.forEach(c=>io.observe(c));
 }else{
   cards.forEach(c=>c.classList.add('closed'));
+}
+
+// ── Refined pizzazz ──
+// Scroll-reveal with sibling stagger
+const rvEls=[...document.querySelectorAll('.sec-head,.gap,.seg,.loopcard,.trust-band,.loop-card,.plan,.theme-tile,.pillar-copy,.strata,.price-note')];
+const finalWrap=document.querySelector('.final .wrap');if(finalWrap)rvEls.push(finalWrap);
+if('IntersectionObserver'in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  rvEls.forEach(el=>el.classList.add('rv'));
+  const rio=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const sibs=[...e.target.parentElement.children].filter(c=>c.classList.contains('rv'));
+      e.target.style.transitionDelay=Math.max(0,sibs.indexOf(e.target))*90+'ms';
+      e.target.classList.add('in');rio.unobserve(e.target);
+    });
+  },{threshold:.16});
+  rvEls.forEach(el=>rio.observe(el));
+}
+// Hero phone: evening cards tick off on a loop
+const phCards=[...document.querySelectorAll('.ph-body .ph-card')];
+if(phCards.length>=4&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const tick=c=>{c.classList.add('done');c.querySelector('.ph-tick').textContent='\u2713';};
+  const untick=c=>{c.classList.remove('done');c.querySelector('.ph-tick').textContent='';};
+  (function phoneLoop(){
+    setTimeout(()=>{tick(phCards[2]);
+      setTimeout(()=>{tick(phCards[3]);
+        setTimeout(()=>{untick(phCards[2]);untick(phCards[3]);phoneLoop();},4600);
+      },1700);
+    },2800);
+  })();
 }
 </script>
 </body>
