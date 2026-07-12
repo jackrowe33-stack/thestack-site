@@ -48,7 +48,7 @@ footer a{color:var(--ink-soft)}footer a:hover{color:var(--ink)}
     <a href="medical-disclaimer.html">Medical disclaimer</a>
   </nav>
 </div></header>
-<main><div class="wrap">
+<main><div class="wrap" id="legal-doc">
 <div class="draft-note"><b>Internal draft.</b> Replace every [BRACKETED] placeholder and have this reviewed by a qualified lawyer, then delete this notice before go-live.</div>
 <h1>Terms of Service — The Stack</h1>
 <p><strong>Last updated: [DATE]</strong></p>
@@ -86,5 +86,39 @@ footer a{color:var(--ink-soft)}footer a:hover{color:var(--ink)}
   <span>&copy; 2026 The Stack. Made in Melbourne.</span>
   <a href="../">&#8592; Back to thestack</a>
 </div></footer>
+<script>
+/* Live copy: config/legal is published from The Stack's admin console.
+   On success this replaces the baked draft; any failure leaves it as-is. */
+(function(){
+  var KEY='terms';
+  function md(src){
+    var s=String(src||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
+    var lines=s.split('\n'),html='',list=null,para=[];
+    function flush(){if(para.length){html+='<p>'+para.join('<br>')+'</p>';para=[];}}
+    function close(){if(list){html+='</'+list+'>';list=null;}}
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i].trim(),m;
+      if(!line){flush();close();continue;}
+      if(m=line.match(/^#\s+(.*)$/)){flush();close();html+='<h1>'+m[1]+'</h1>';continue;}
+      if(m=line.match(/^#{2,6}\s+(.*)$/)){flush();close();html+='<h2>'+m[1]+'</h2>';continue;}
+      if(m=line.match(/^[-*]\s+(.*)$/)){flush();if(list!=='ul'){close();html+='<ul>';list='ul';}html+='<li>'+m[1]+'</li>';continue;}
+      if(m=line.match(/^\d+\.\s+(.*)$/)){flush();if(list!=='ol'){close();html+='<ol>';list='ol';}html+='<li>'+m[1]+'</li>';continue;}
+      if(/^&gt;/.test(line)){continue;}
+      close();para.push(line);
+    }
+    flush();close();return html;
+  }
+  fetch('https://firestore.googleapis.com/v1/projects/the-stack-prod/databases/(default)/documents/config/legal')
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(doc){
+      var f=doc&&doc.fields&&doc.fields[KEY];
+      if(!(f&&f.stringValue))return;
+      var el=document.getElementById('legal-doc');
+      if(el)el.innerHTML=md(f.stringValue);
+    }).catch(function(){});
+})();
+</script>
 </body>
 </html>
