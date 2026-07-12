@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steady State Studios</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' stroke='%23b87040' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='4.5' fill='%23b87040'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#121418;--bg-raise:#191c22;--card:#1e2128;--card-edge:#2c303a;
+  --ink:#edeae6;--ink-mid:#8a8a96;--ink-soft:#52525e;
+  --cu:#b87040;--cu-deep:#8c5430;--cu-btn:#7a4828;--cu-rgb:184,112,64;
+  --hairline:#28282e;
+  --card-shadow:0 1px 2px rgba(0,0,0,.25),0 4px 12px rgba(0,0,0,.28);
+  --card-shadow-lg:0 2px 4px rgba(0,0,0,.28),0 10px 28px rgba(0,0,0,.34);
+}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Fraunces',serif;font-optical-sizing:auto}
+.eyebrow{font:600 11px/1 'Inter',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--cu)}
+:focus-visible{outline:2px solid var(--cu);outline-offset:3px;border-radius:4px}
+em.brand{font-style:italic;font-weight:500;color:var(--cu);font-family:'Fraunces',serif}
+
+/* nav */
+header{position:sticky;top:0;z-index:50;background:rgba(18,20,24,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--hairline)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:19px;letter-spacing:-.01em;display:flex;align-items:center}
+.logo em{font-style:italic;font-weight:400;color:var(--cu)}
+.nav-links{display:flex;gap:28px;font-size:14px;color:var(--ink-mid)}
+.nav-links a:hover{color:var(--ink)}
+.btn{display:inline-block;padding:11px 22px;border-radius:100px;font:500 14px/1 'Inter',sans-serif;transition:transform .15s ease,box-shadow .15s ease;cursor:pointer;border:none}
+.btn-cu{background:var(--cu);color:#121418}
+.btn-cu:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(var(--cu-rgb),.35)}
+.btn-ghost{border:1px solid var(--card-edge);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--cu)}
+.nav .btn{padding:9px 18px}
+@media(max-width:720px){.nav-links{display:none}}
+
+/* hero */
+.hero{padding:110px 0 90px;position:relative;overflow:hidden;text-align:center}
+.hero::before{content:"";position:absolute;top:-320px;left:50%;transform:translateX(-50%);width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(var(--cu-rgb),.13),transparent 62%);pointer-events:none}
+h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(38px,6vw,64px);line-height:1.08;letter-spacing:-.02em;position:relative}
+h1 em{font-style:italic;font-weight:400;color:var(--cu)}
+.hero p.lede{margin:22px auto 0;font-size:18px;color:var(--ink-mid);max-width:58ch;position:relative}
+.hero p.lede b{color:var(--ink);font-weight:500}
+
+/* mark */
+.mark{width:56px;height:56px;margin:0 auto 26px;position:relative}
+
+/* sections */
+section{padding:84px 0;border-top:1px solid var(--hairline)}
+.sec-head{max-width:64ch;margin:0 auto 48px;text-align:center}
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.015em;line-height:1.16;margin:12px 0 14px}
+h2 em{font-style:italic;font-weight:400;color:var(--cu)}
+.sec-head p{color:var(--ink-mid);font-size:16px}
+
+/* principles */
+.prin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.prin-grid{grid-template-columns:1fr}}
+.prin{background:var(--card);border:1px solid var(--card-edge);border-radius:20px;padding:28px 26px;box-shadow:var(--card-shadow);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.prin:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-lg);border-color:rgba(var(--cu-rgb),.45)}
+.prin .p-tag{font:600 10px/1 'Inter',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:14px}
+.prin h3{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin-bottom:8px}
+.prin p{font-size:14.5px;color:var(--ink-mid)}
+
+/* products */
+.product-card{background:linear-gradient(150deg,rgba(var(--cu-rgb),.12),var(--card) 60%);border:1px solid rgba(var(--cu-rgb),.35);border-radius:22px;padding:36px 34px;display:flex;align-items:center;justify-content:space-between;gap:28px;box-shadow:var(--card-shadow-lg)}
+@media(max-width:700px){.product-card{flex-direction:column;text-align:center}}
+.product-card h3{font-family:'Fraunces',serif;font-weight:500;font-size:26px;margin-bottom:8px}
+.product-card h3 em{font-style:italic;color:var(--cu);font-weight:400}
+.product-card p{color:var(--ink-mid);font-size:15px;max-width:48ch}
+.product-card .p-status{display:inline-block;font:600 10.5px/1 'Inter',sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:100px;background:var(--bg-raise);color:var(--ink-mid);border:1px solid var(--card-edge);margin-bottom:14px}
+
+/* contact / footer */
+.final{text-align:center;padding:100px 0}
+.final p{color:var(--ink-mid);margin:14px 0 30px;max-width:52ch;margin-left:auto;margin-right:auto}
+footer{border-top:1px solid var(--hairline);padding:32px 0;font-size:13px;color:var(--ink-soft)}
+footer .frow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+footer .flinks{display:flex;gap:22px}
+footer a:hover{color:var(--ink)}
+
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo"><svg width="20" height="20" viewBox="0 0 32 32" fill="none" style="margin-right:8px"><circle cx="16" cy="16" r="12" stroke="var(--cu)" stroke-width="2.4"/><circle cx="16" cy="16" r="4.5" fill="var(--cu)"/></svg>Steady State <em>Studios</em></a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#principles">Approach</a>
+      <a href="#products">Products</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div>
+      <a class="btn btn-cu" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 56 56" fill="none" width="56" height="56"><circle cx="28" cy="28" r="21" stroke="var(--cu)" stroke-width="2.6"/><circle cx="28" cy="28" r="7.5" fill="var(--cu)"/></svg>
+    </div>
+    <span class="eyebrow">Independent software studio · Melbourne, Australia</span>
+    <h1>Small studio. <em>Steady</em> work.</h1>
+    <p class="lede">Steady State Studios builds focused, well-made apps — starting with <b>The Stack</b>, a personal care routine tracker. No hype cycles, no bloat. Just useful software, maintained properly.</p>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">About</span>
+      <h2>Built by one person. Made to last.</h2>
+      <p>Steady State Studios is an independent software studio based in Melbourne. It's small by design — one developer, a short list of products, and a preference for getting things right over getting things out fast.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section id="principles">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How we work</span>
+      <h2>A few things we don't compromise on.</h2>
+    </div>
+    <div class="prin-grid">
+      <div class="prin">
+        <span class="p-tag">Privacy</span>
+        <h3>Your data is yours</h3>
+        <p>Free tiers keep data on-device wherever possible. Paid sync is opt-in, isolated per account, and never sold or shared with advertisers.</p>
+      </div>
+      <div class="prin">
+        <span class="p-tag">Honesty</span>
+        <h3>No dark patterns</h3>
+        <p>Clear pricing, clear cancellation, no manufactured urgency. If a recommendation earns us a commission, we say so — and we don't let it change the advice.</p>
+      </div>
+      <div class="prin">
+        <span class="p-tag">Craft</span>
+        <h3>Maintained, not abandoned</h3>
+        <p>Small studio means a short list of products — and real ongoing attention to each one, rather than a graveyard of shipped-and-forgotten apps.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Products</span>
+      <h2>What we're building.</h2>
+    </div>
+    <div class="product-card">
+      <div>
+        <span class="p-status">In development</span>
+        <h3>The <em>Stack</em></h3>
+        <p>A personal care routine tracker for skincare, hair, scent and supplements — with an AI assistant that helps you build a routine and stick to it.</p>
+      </div>
+      <a class="btn btn-ghost" href="https://jackrowe33-stack.github.io/thestack/" target="_blank" rel="noopener">Visit The Stack</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="final">
+  <div class="wrap">
+    <span class="eyebrow">Get in touch</span>
+    <h2>Questions, support, or press.</h2>
+    <p>For support with The Stack, or anything else, reach out directly.</p>
+    <a class="btn btn-cu" href="mailto:hello@steadystatestudios.com">hello@steadystatestudios.com</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap frow">
+    <span class="logo" style="font-size:15px">Steady State <em>Studios</em></span>
+    <div class="flinks">
+      <a href="../legal/privacy.html">Privacy</a><a href="../legal/terms.html">Terms</a><a href="mailto:hello@steadystatestudios.com">Contact</a>
+    </div>
+    <span>&copy; 2026 Steady State Studios. Made in Melbourne.</span>
+  </div>
+</footer>
+
+<script>
+const rvEls=[...document.querySelectorAll('.sec-head,.prin,.product-card')];
+if('IntersectionObserver'in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  rvEls.forEach(el=>el.classList.add('rv'));
+  const rio=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const sibs=[...e.target.parentElement.children].filter(c=>c.classList.contains('rv'));
+      e.target.style.transitionDelay=Math.max(0,sibs.indexOf(e.target))*90+'ms';
+      e.target.classList.add('in');rio.unobserve(e.target);
+    });
+  },{threshold:.16});
+  rvEls.forEach(el=>rio.observe(el));
+}
+</script>
+</body>
+</html>
