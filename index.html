@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stack — Build your Stack. Close your Loop.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#121418;--bg-raise:#191c22;--card:#1e2128;--card-edge:#2c303a;
+  --ink:#edeae6;--ink-mid:#8a8a96;--ink-soft:#52525e;
+  --cu:#b87040;--cu-deep:#8c5430;--cu-btn:#7a4828;--cu-rgb:184,112,64;
+  --hairline:#28282e;
+  --card-shadow:0 1px 2px rgba(0,0,0,.25),0 4px 12px rgba(0,0,0,.28);
+  --card-shadow-lg:0 2px 4px rgba(0,0,0,.28),0 10px 28px rgba(0,0,0,.34);
+}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Fraunces',serif;font-optical-sizing:auto}
+.eyebrow{font:600 11px/1 'Inter',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--cu)}
+:focus-visible{outline:2px solid var(--cu);outline-offset:3px;border-radius:4px}
+em.brand{font-style:italic;font-weight:500;color:var(--cu);font-family:'Fraunces',serif}
+
+/* ── nav ── */
+header{position:sticky;top:0;z-index:50;background:rgba(18,20,24,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--hairline)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:20px;letter-spacing:-.01em}
+.logo em{font-style:italic;font-weight:400;color:var(--cu)}
+.nav-links{display:flex;gap:28px;font-size:14px;color:var(--ink-mid)}
+.nav-links a:hover{color:var(--ink)}
+.btn{display:inline-block;padding:11px 22px;border-radius:100px;font:500 14px/1 'Inter',sans-serif;transition:transform .15s ease,box-shadow .15s ease;cursor:pointer;border:none}
+.btn-cu{background:var(--cu);color:#121418}
+.btn-cu:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(var(--cu-rgb),.35)}
+.btn-ghost{border:1px solid var(--card-edge);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--cu)}
+.nav .btn{padding:9px 18px}
+@media(max-width:720px){.nav-links{display:none}}
+
+/* ── hero ── */
+.hero{padding:96px 0 84px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-320px;right:-180px;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle,rgba(var(--cu-rgb),.13),transparent 62%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;position:relative}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr}.hero{padding:64px 0}}
+h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(42px,5.6vw,68px);line-height:1.05;letter-spacing:-.02em}
+h1 .l1{display:block}
+h1 em{font-style:italic;font-weight:400;color:var(--cu)}
+.hero p.lede{margin:24px 0 32px;font-size:18px;color:var(--ink-mid);max-width:47ch}
+.hero p.lede b{color:var(--ink);font-weight:500}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.store-note{font-size:12.5px;color:var(--ink-soft);margin-top:16px}
+
+/* phone frame */
+.phone-col{display:flex;justify-content:center}
+.phone{width:300px;height:610px;border-radius:44px;background:var(--bg-raise);border:1px solid var(--card-edge);box-shadow:var(--card-shadow-lg),0 0 0 8px rgba(0,0,0,.25);padding:14px;transition:background .8s ease,border-color .8s ease}
+.phone-screen{width:100%;height:100%;border-radius:32px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;transition:background .8s ease}
+.ph-head{padding:22px 18px 8px}
+.ph-date{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cu);font-weight:600;transition:color .8s ease}
+.ph-title{font-family:'Fraunces',serif;font-size:24px;font-weight:500;margin-top:4px}
+.ph-body{flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.ph-card{background:var(--card);border:1px solid var(--card-edge);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:11px;transition:background .8s ease,border-color .8s ease}
+.ph-tick{width:22px;height:22px;border-radius:50%;flex:none;border:1.5px solid var(--ink-soft);display:grid;place-items:center;font-size:12px}
+.ph-card.done .ph-tick{background:var(--cu);border-color:var(--cu);color:#121418;transition:background .8s ease,border-color .8s ease}
+.ph-card.done .ph-name{color:var(--ink-mid);text-decoration:line-through;text-decoration-color:rgba(var(--cu-rgb),.5)}
+.ph-name{font-size:13px;font-weight:500}
+.ph-sub{font-size:10.5px;color:var(--ink-soft)}
+.ph-loop{margin-top:auto;background:linear-gradient(135deg,rgba(var(--cu-rgb),.16),rgba(var(--cu-rgb),.05));border:1px solid rgba(var(--cu-rgb),.3);border-radius:16px;padding:12px 14px;transition:background .8s ease,border-color .8s ease}
+.ph-loop .ph-name{color:var(--cu);transition:color .8s ease}
+.ph-loop .ph-sub{color:var(--ink-mid);margin-top:3px;line-height:1.45}
+.ph-tabs{display:flex;justify-content:space-around;padding:12px 10px 20px;border-top:1px solid var(--hairline)}
+.ph-tab{font-size:10px;color:var(--ink-soft);text-align:center}
+.ph-tab.on{color:var(--cu);transition:color .8s ease}
+.ph-tab .dot{width:20px;height:20px;border-radius:6px;background:currentColor;opacity:.85;margin:0 auto 4px}
+.theme-chips{display:flex;gap:10px;justify-content:center;margin-top:22px}
+.chip{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;transition:transform .15s ease}
+.chip:hover{transform:scale(1.12)}
+.chip.on{border-color:var(--ink)}
+.chip-note{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:10px}
+
+/* ── sections ── */
+section{padding:92px 0;border-top:1px solid var(--hairline)}
+.sec-head{max-width:62ch;margin-bottom:52px}
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(28px,3.6vw,42px);letter-spacing:-.015em;line-height:1.14;margin:12px 0 14px}
+h2 em{font-style:italic;font-weight:400;color:var(--cu)}
+.sec-head p{color:var(--ink-mid);font-size:16.5px}
+.sec-head p b{color:var(--ink);font-weight:500}
+
+/* why — open loops */
+.gap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.gap-grid{grid-template-columns:1fr}}
+.gap{background:var(--card);border:1px solid var(--card-edge);border-radius:20px;padding:28px 26px;box-shadow:var(--card-shadow)}
+.gap .open-ring{width:44px;height:44px;margin-bottom:18px}
+.gap h3{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin-bottom:8px}
+.gap p{font-size:14.5px;color:var(--ink-mid)}
+.gap .g-tag{font:600 10px/1 'Inter',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:14px}
+.why-kicker{margin-top:44px;font-family:'Fraunces',serif;font-size:clamp(20px,2.4vw,26px);font-weight:400;font-style:italic;color:var(--ink-mid);max-width:52ch}
+.why-kicker b{color:var(--cu);font-style:normal;font-weight:500}
+
+/* stack pillar */
+.pillar{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:860px){.pillar{grid-template-columns:1fr;gap:40px}}
+.pillar-copy p{color:var(--ink-mid);font-size:15.5px;margin-bottom:16px}
+.pillar-copy p b{color:var(--ink);font-weight:500}
+.pillar-copy .mantra{font-family:'Fraunces',serif;font-style:italic;font-size:19px;color:var(--cu);margin-top:24px}
+.strata{display:flex;flex-direction:column;gap:0;max-width:400px;margin:0 auto;width:100%}
+.stratum{background:var(--card);border:1px solid var(--card-edge);border-radius:16px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--card-shadow);position:relative}
+.stratum+.stratum{margin-top:-6px}
+.stratum:nth-child(1){transform:translateX(0)}
+.stratum:nth-child(2){transform:translateX(14px)}
+.stratum:nth-child(3){transform:translateX(28px)}
+.stratum:nth-child(4){transform:translateX(42px)}
+.stratum .s-role{font:600 10px/1 'Inter',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--cu)}
+.stratum .s-name{font-size:14px;font-weight:500;margin-top:4px}
+.stratum .s-ord{font-family:'Fraunces',serif;font-size:22px;color:var(--ink-soft)}
+.strata-cap{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:22px}
+@media(max-width:480px){.stratum:nth-child(n){transform:none}}
+
+/* loop pillar */
+.loops-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+@media(max-width:860px){.loops-grid{grid-template-columns:1fr}}
+.trust-band{display:flex;gap:24px;align-items:center;background:linear-gradient(150deg,rgba(var(--cu-rgb),.14),var(--card) 60%);border:1px solid rgba(var(--cu-rgb),.4);border-radius:22px;padding:28px 30px;margin-bottom:56px;box-shadow:var(--card-shadow)}
+.trust-band .tb-ring{flex:none;width:56px;height:56px}
+.trust-band h3{font-size:22px;font-weight:500;margin-bottom:6px}
+.trust-band p{font-size:14.5px;color:var(--ink-mid);max-width:72ch}
+@media(max-width:600px){.trust-band{flex-direction:column;align-items:flex-start}}
+/* segments strip */
+.seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.seg-grid{grid-template-columns:1fr}}
+.seg{background:var(--card);border:1px solid var(--card-edge);border-radius:20px;padding:26px 24px;box-shadow:var(--card-shadow)}
+.seg .s-eyebrow{font:600 10px/1 'Inter',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--cu);display:block;margin-bottom:12px}
+.seg h3{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:8px;font-style:italic}
+.seg p{font-size:14px;color:var(--ink-mid)}
+.loopcard{background:var(--card);border:1px solid var(--card-edge);border-radius:20px;padding:30px 26px;box-shadow:var(--card-shadow);text-align:left}
+.loopcard svg{width:64px;height:64px;margin-bottom:20px}
+.loopcard .ring-track{stroke:var(--hairline)}
+.loopcard .ring-draw{stroke:var(--cu);stroke-dasharray:176;stroke-dashoffset:176;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)}
+.loopcard.closed .ring-draw{stroke-dashoffset:0}
+.loopcard .ring-check{stroke:var(--cu);opacity:0;transition:opacity .4s ease 1.15s}
+.loopcard.closed .ring-check{opacity:1}
+@media(prefers-reduced-motion:reduce){.loopcard .ring-draw{stroke-dashoffset:0}.loopcard .ring-check{opacity:1}}
+.loopcard h3{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin-bottom:8px}
+.loopcard h3 em{font-style:italic;color:var(--cu);font-weight:400}
+.loopcard p{font-size:14.5px;color:var(--ink-mid)}
+.loop-chat-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.loop-chat-grid{grid-template-columns:1fr}}
+.loop-card{border-radius:22px;padding:30px 28px;border:1px solid var(--card-edge);background:var(--card)}
+.loop-card.pro{background:linear-gradient(160deg,rgba(var(--cu-rgb),.14),var(--card) 55%);border-color:rgba(var(--cu-rgb),.4)}
+.loop-card .tag{display:inline-block;font:600 10.5px/1 'Inter',sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border-radius:100px;background:var(--bg-raise);color:var(--ink-mid);border:1px solid var(--card-edge)}
+.loop-card.pro .tag{background:var(--cu);color:#121418;border-color:var(--cu)}
+.loop-card h3{font-family:'Fraunces',serif;font-weight:500;font-size:24px;margin:18px 0 10px}
+.loop-card>p{font-size:14.5px;color:var(--ink-mid);margin-bottom:22px}
+.chat{display:flex;flex-direction:column;gap:10px}
+.bubble{max-width:88%;padding:11px 15px;border-radius:16px;font-size:13.5px;line-height:1.5}
+.bubble.user{align-self:flex-end;background:var(--cu-btn);color:var(--ink);border-bottom-right-radius:5px}
+.bubble.loop{align-self:flex-start;background:var(--bg-raise);border:1px solid var(--card-edge);border-bottom-left-radius:5px}
+.bubble .who{display:block;font:600 9.5px/1 'Inter',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--cu);margin-bottom:5px}
+
+/* themes strip */
+.themes-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+@media(max-width:860px){.themes-row{grid-template-columns:repeat(3,1fr)}}
+.theme-tile{border-radius:18px;padding:20px 16px 16px;border:1px solid;box-shadow:var(--card-shadow)}
+.theme-tile .swatch{width:34px;height:34px;border-radius:50%;margin-bottom:26px}
+.theme-tile .t-name{font-family:'Fraunces',serif;font-size:16px;font-weight:500}
+.theme-tile .t-sub{font-size:11px;opacity:.55}
+
+/* pricing */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+@media(max-width:900px){.price-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}}
+.plan{background:var(--card);border:1px solid var(--card-edge);border-radius:22px;padding:30px 28px;display:flex;flex-direction:column;box-shadow:var(--card-shadow)}
+.plan.hot{background:linear-gradient(165deg,rgba(var(--cu-rgb),.16),var(--card) 50%);border-color:var(--cu);position:relative;box-shadow:var(--card-shadow-lg)}
+.plan .flag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--cu);color:#121418;font:600 10.5px/1 'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:7px 14px;border-radius:100px;white-space:nowrap}
+.plan h3{font-family:'Fraunces',serif;font-weight:500;font-size:22px}
+.plan h3 em{font-style:italic;color:var(--cu);font-weight:400}
+.plan .p-sub{font-size:13px;color:var(--ink-mid);margin:4px 0 20px}
+.price{font-family:'Fraunces',serif;font-size:42px;font-weight:500;line-height:1}
+.price span{font:400 13px/1 'Inter',sans-serif;color:var(--ink-mid)}
+.p-annual{font-size:12px;color:var(--ink-soft);margin:8px 0 22px}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:11px;font-size:13.5px;color:var(--ink-mid);margin-bottom:28px}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan li b{color:var(--ink);font-weight:500}
+.plan li::before{content:"";flex:none;width:16px;height:16px;margin-top:2px;border-radius:50%;background:rgba(var(--cu-rgb),.18) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23b87040" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') center/9px no-repeat}
+.plan li.no::before{background:var(--bg-raise) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2352525e" stroke-width="3" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg>') center/9px no-repeat}
+.plan li.no{color:var(--ink-soft)}
+.plan .btn{margin-top:auto;text-align:center}
+.price-note{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:26px}
+
+/* faq */
+.faq{max-width:720px}
+details{border-bottom:1px solid var(--hairline);padding:20px 4px}
+summary{cursor:pointer;font-weight:500;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:'Fraunces',serif;font-size:22px;color:var(--cu);flex:none;transition:transform .2s ease}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin-top:12px;font-size:14.5px;color:var(--ink-mid);max-width:62ch}
+
+/* cta + footer */
+.final{text-align:center;padding:110px 0}
+.final h2{margin-bottom:14px}
+.final p{color:var(--ink-mid);margin-bottom:32px}
+footer{border-top:1px solid var(--hairline);padding:36px 0;font-size:13px;color:var(--ink-soft)}
+footer .frow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+footer .flinks{display:flex;gap:22px}
+footer a:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo">The <em>Stack</em></a>
+    <nav class="nav-links">
+      <a href="#why">Why</a>
+      <a href="#stack">The Stack</a>
+      <a href="#loop">The Loop</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#pricing" class="btn btn-cu">Get the app</a>
+  </div>
+</header>
+
+<!-- ───────── HERO ───────── -->
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Skincare · Hair · Scent · Supplements</span>
+      <h1><span class="l1">Build your <em>Stack.</em></span><span class="l1">Close your <em>Loop.</em></span></h1>
+      <p class="lede">Whether your shelf is full or you've never bought a serum in your life — <b>the Stack</b> builds your routine around you, and <b>the Loop</b> makes sure it actually happens. What to buy, what to skip, what to do tonight.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-cu" href="#pricing">Download for iOS</a>
+        <a class="btn btn-ghost" href="#pricing">Get it on Android</a>
+      </div>
+      <p class="store-note">Free to start. No account required on the free plan.</p>
+    </div>
+    <div class="phone-col">
+      <div>
+        <div class="phone"><div class="phone-screen">
+          <div class="ph-head">
+            <div class="ph-date">Saturday · Recovery night</div>
+            <div class="ph-title serif">Today</div>
+          </div>
+          <div class="ph-body">
+            <div class="ph-card done"><div class="ph-tick">✓</div><div><div class="ph-name">Morning skincare</div><div class="ph-sub">6 steps · done 7:42 am</div></div></div>
+            <div class="ph-card done"><div class="ph-tick">✓</div><div><div class="ph-name">Hair — daily base</div><div class="ph-sub">2 steps · done 7:51 am</div></div></div>
+            <div class="ph-card"><div class="ph-tick"></div><div><div class="ph-name">Evening — Recovery</div><div class="ph-sub">8 steps · from 9:00 pm</div></div></div>
+            <div class="ph-card"><div class="ph-tick"></div><div><div class="ph-name">Supplements — pm</div><div class="ph-sub">3 items</div></div></div>
+            <div class="ph-loop">
+              <div class="ph-name">Loop</div>
+              <div class="ph-sub">Retinol ran three nights this week — tonight's recovery routine is well timed. Barrier first.</div>
+            </div>
+          </div>
+          <div class="ph-tabs">
+            <div class="ph-tab on"><div class="dot"></div>Home</div>
+            <div class="ph-tab"><div class="dot"></div>Loop</div>
+            <div class="ph-tab"><div class="dot"></div>Routines</div>
+          </div>
+        </div></div>
+        <div class="theme-chips" id="chips" role="group" aria-label="Preview app themes"></div>
+        <div class="chip-note">Six themes, light and dark. Tap to preview.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── WHY ───────── -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Why this exists</span>
+      <h2>Three gaps stand between you and good skin.</h2>
+      <p>Not one of them is solved by another product. One is <b>not knowing</b> where to start. One is <b>not doing</b> what you already know. One is <b>not keeping</b> it going — money leaking into gimmicks, staples quietly running out. Everyone lands in at least one.</p>
+    </div>
+    <div class="gap-grid">
+      <div class="gap">
+        <svg class="open-ring" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="17" stroke="var(--hairline)" stroke-width="3"/><path d="M22 5a17 17 0 0 1 14.7 25.5" stroke="var(--cu)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="g-tag">The knowing gap</span>
+        <h3>"Where do I even start?"</h3>
+        <p>You'd like to take care of your skin, but the aisle is overwhelming, the jargon is a wall, and asking someone feels embarrassing. So you do nothing — or buy whatever the ad said.</p>
+      </div>
+      <div class="gap">
+        <svg class="open-ring" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="17" stroke="var(--hairline)" stroke-width="3"/><path d="M22 5a17 17 0 0 1 10 30.8" stroke="var(--cu)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="g-tag">The doing gap</span>
+        <h3>"I own it all. I still skip it."</h3>
+        <p>The shelf is stocked and the plan lives in your head — it just keeps not happening on your face. Week one is easy; week six is where routines go to die.</p>
+      </div>
+      <div class="gap">
+        <svg class="open-ring" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="17" stroke="var(--hairline)" stroke-width="3"/><path d="M22 5a17 17 0 0 1 4.4 33.4" stroke="var(--cu)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="g-tag">The keeping gap</span>
+        <h3>"Why did I buy that?"</h3>
+        <p>The $200 miracle cream that did what the $30 one does. The cleanser that ran out mid-week. Money goes to marketing, not ingredients — and the things that work go unstocked.</p>
+      </div>
+    </div>
+    <p class="why-kicker">One app closes all three. It has two ideas in it, and we named it after both: <b>the Stack</b> — what you own — and <b>the Loop</b> — what keeps it working.</p>
+  </div>
+</section>
+
+<!-- ───────── PILLAR ONE: THE STACK ───────── -->
+<section id="stack">
+  <div class="wrap pillar">
+    <div class="pillar-copy">
+      <span class="eyebrow">Pillar one</span>
+      <h2>The <em>Stack</em> is yours. Not a template.</h2>
+      <p>Your stack is your products, in your order, on your schedule — built around <b>your skin, your hair, your week, your budget</b>. Not a dermatologist's ideal. Not an influencer's shelf. Yours.</p>
+      <p><b>Starting from nothing?</b> The Stack starts at zero — a first stack can be three products and five minutes a day. <b>Shelf already full?</b> Bring it all in — skincare, hair, scent rotation, supplements — as ordered, step-by-step routines that react when your life changes.</p>
+      <p>And when you're deciding what earns a spot on the shelf next, you get <b>advice in context</b> — grounded in what you already own and what you're trying to do — so the next addition makes your stack better, not just bigger.</p>
+      <p class="mantra">"Nobody else has your skin. Nobody else should have your stack."</p>
+    </div>
+    <div>
+      <div class="strata" aria-hidden="true">
+        <div class="stratum"><div><div class="s-role">Cleanse</div><div class="s-name">Cleansing oil → gel cleanser</div></div><div class="s-ord">01</div></div>
+        <div class="stratum"><div><div class="s-role">Treat</div><div class="s-name">Retinol · Tue / Wed / Fri only</div></div><div class="s-ord">02</div></div>
+        <div class="stratum"><div><div class="s-role">Seal</div><div class="s-name">Night crème + barrier layer</div></div><div class="s-ord">03</div></div>
+        <div class="stratum"><div><div class="s-role">Finish</div><div class="s-name">Eye crème</div></div><div class="s-ord">04</div></div>
+      </div>
+      <p class="strata-cap">A stack is a sequence — every layer in the order you apply it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── PILLAR TWO: THE LOOP ───────── -->
+<section id="loop">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Pillar two</span>
+      <h2><em>Loop</em> closes the loop.</h2>
+      <p>Loop is the intelligence inside The Stack — it knows your shelf, your skin, your budget and your history. Its job is in the name: <b>find the open loops between you and good skin, and close them.</b> Four ways:</p>
+    </div>
+    <div class="loops-grid">
+      <div class="loopcard" data-loop>
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle class="ring-track" cx="32" cy="32" r="28" stroke-width="3.5"/>
+          <circle class="ring-draw" cx="32" cy="32" r="28" stroke-width="3.5" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <path class="ring-check" d="M22 33l7 7 13-14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>No dumb questions</h3>
+        <p>The questions you'd never ask out loud — "do I actually need toner?", "what order do these go in?", "what even is my skin type?" — Loop answers privately, patiently, from absolute zero. No counter staff. No judgment. No one watching you learn.</p>
+      </div>
+      <div class="loopcard" data-loop>
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle class="ring-track" cx="32" cy="32" r="28" stroke-width="3.5"/>
+          <circle class="ring-draw" cx="32" cy="32" r="28" stroke-width="3.5" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <path class="ring-check" d="M22 33l7 7 13-14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Advice becomes action</h3>
+        <p>Answers don't stop at words — they land as changes in tonight's routine. And when life squeezes you, Loop adapts the routine instead of letting it collapse, so week six looks like week one.</p>
+      </div>
+      <div class="loopcard" data-loop>
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle class="ring-track" cx="32" cy="32" r="28" stroke-width="3.5"/>
+          <circle class="ring-draw" cx="32" cy="32" r="28" stroke-width="3.5" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <path class="ring-check" d="M22 33l7 7 13-14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Ingredients over influencers</h3>
+        <p>Loop reads the ingredients list, not the ad. It matches actives to your skin and your budget — and when the $30 product does what the $200 one does, it says so. Fewer products, chosen better.</p>
+      </div>
+      <div class="loopcard" data-loop>
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle class="ring-track" cx="32" cy="32" r="28" stroke-width="3.5"/>
+          <circle class="ring-draw" cx="32" cy="32" r="28" stroke-width="3.5" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <path class="ring-check" d="M22 33l7 7 13-14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Never run dry</h3>
+        <p>The Stack tracks what's on the shelf and how fast you go through it. Loop flags the restock before the bottle's empty — and stops you buying a third of something you already own two of.</p>
+      </div>
+    </div>
+    <div class="trust-band">
+      <div class="tb-ring" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" stroke="var(--cu)" stroke-width="3.5"/><path d="M22 33l7 7 13-14" stroke="var(--cu)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <h3 class="serif">Loop never ranks by commission.</h3>
+        <p>When Loop links to a product, we may earn a small commission — the same small commission whether it's the $30 answer or the $200 one. Recommendations are ranked by ingredients, fit and price. Only that. So we just tell you the truth.</p>
+      </div>
+    </div>
+    <div class="loop-chat-grid">
+      <div class="loop-card">
+        <span class="tag">Standard plan</span>
+        <h3>Ask, and Loop answers.</h3>
+        <p>On-demand help whenever you want it — from your very first question to fine-tuning a ten-step routine.</p>
+        <div class="chat">
+          <div class="bubble user">Honestly I've never used anything except soap. Where do I start?</div>
+          <div class="bubble loop"><span class="who">Loop</span>Perfect starting point — nothing to unlearn. Three products, five minutes a day: a gentle cleanser, a basic moisturiser, sunscreen in the morning. I'll build it as your first stack — want budget picks to match?</div>
+        </div>
+      </div>
+      <div class="loop-card pro">
+        <span class="tag">Professional plan</span>
+        <h3>Loop gets there first.</h3>
+        <p>Proactive support. Loop spots the open loop and steps in before you ask — nudges, adjustments and check-ins built on your actual behaviour.</p>
+        <div class="chat">
+          <div class="bubble loop"><span class="who">Loop</span>You've skipped the evening routine two nights running — long week? Want tonight trimmed to the four essential steps instead of eight?</div>
+          <div class="bubble user">Yes please.</div>
+          <div class="bubble loop"><span class="who">Loop</span>Done — short version is on Today. Full routine returns tomorrow. Loop closed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── STARTING POINTS ───────── -->
+<section id="start">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Wherever you're starting from</span>
+      <h2>Three people open this app.</h2>
+      <p>Different shelves, different problems — same two ideas.</p>
+    </div>
+    <div class="seg-grid">
+      <div class="seg">
+        <span class="s-eyebrow">Starting from scratch</span>
+        <h3>"I don't know anything."</h3>
+        <p>You don't need to. Ask Loop the basics in private, get a three-product first stack matched to your skin and budget, and build from there — at your pace.</p>
+      </div>
+      <div class="seg">
+        <span class="s-eyebrow">Shelf already full</span>
+        <h3>"I know exactly what to do. I just don't."</h3>
+        <p>Bring your whole stack in — every step, every schedule. Today shows what tonight calls for, the runner walks you through it, and Loop keeps week six looking like week one.</p>
+      </div>
+      <div class="seg">
+        <span class="s-eyebrow">Burned by hype</span>
+        <h3>"I'm done wasting money."</h3>
+        <p>Loop ranks by ingredients, fit and price — never by commission. Fewer products, chosen for your skin, restocked before they run out. Your budget goes to what works.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── THEMES ───────── -->
+<section id="themes">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Make it yours</span>
+      <h2>Calm on the outside, too.</h2>
+      <p>A routine app you open twice a day should be a pleasure to look at. Six themes, light and dark, zero clutter.</p>
+    </div>
+    <div class="themes-row" id="themeTiles"></div>
+  </div>
+</section>
+
+<!-- ───────── PRICING ───────── -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Pricing</span>
+      <h2>The Stack is free. The <em>Loop</em> is the upgrade.</h2>
+      <p>Every plan gets the full stack engine — unlimited tracking, the step-by-step runner, all six themes. Paid plans add sync and bring Loop into your corner.</p>
+    </div>
+    <div class="price-grid">
+
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="p-sub">Your stack, on your device.</div>
+        <div class="price">$0</div>
+        <div class="p-annual">forever</div>
+        <ul>
+          <li><b>The full stack engine</b>&nbsp;— unlimited daily tracking</li>
+          <li>Step-by-step routine runner</li>
+          <li>Product shelf with shopping links</li>
+          <li>All six themes</li>
+          <li class="no">Stored on this device only</li>
+          <li class="no">No Loop</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">Download free</a>
+      </div>
+
+      <div class="plan">
+        <h3>Standard</h3>
+        <div class="p-sub">Loop answers when you ask.</div>
+        <div class="price">$5<span> / month</span></div>
+        <div class="p-annual">or $50 / year — two months free</div>
+        <ul>
+          <li>Everything in Free</li>
+          <li><b>Cloud sync</b>&nbsp;across all your devices</li>
+          <li><b>Loop on demand</b>&nbsp;— ask about your stack, your routine, your history</li>
+          <li>Monthly Loop allowance for everyday questions</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">Start with Standard</a>
+      </div>
+
+      <div class="plan hot">
+        <span class="flag">Closes every loop</span>
+        <h3>Professional</h3>
+        <div class="p-sub">Loop works proactively, like a coach.</div>
+        <div class="price">$10<span> / month</span></div>
+        <div class="p-annual">or $110 / year</div>
+        <ul>
+          <li>Everything in Standard</li>
+          <li><b>Proactive Loop</b>&nbsp;— check-ins, pattern-spotting and routine adjustments before you ask</li>
+          <li><b>Highest Loop allowance</b>&nbsp;for daily use</li>
+          <li>Early access to new features</li>
+        </ul>
+        <a class="btn btn-cu" href="#">Go Professional</a>
+      </div>
+
+    </div>
+    <p class="price-note">Prices in AUD. Cancel anytime from the app store — no lock-in.</p>
+  </div>
+</section>
+
+<!-- ───────── FAQ ───────── -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Questions</span>
+      <h2>The short answers.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>What's "the Stack" and what's "the Loop"?</summary>
+        <p>The Stack is your side: your products, organised into ordered routines built around you. The Loop is the app's side: the intelligence that keeps you and that routine connected — turning advice into action and intentions into a habit that lasts. You build the Stack; Loop keeps it closed.</p>
+      </details>
+      <details>
+        <summary>I know nothing about skincare. Is this for me?</summary>
+        <p>Especially for you. Loop is built for the questions people are embarrassed to ask anywhere else — it starts from zero, explains without jargon, and builds you a simple first stack you can actually keep. Nobody's watching you learn.</p>
+      </details>
+      <details>
+        <summary>How does The Stack make money from recommendations?</summary>
+        <p>Some product links earn us a small commission — roughly the same whether the product costs $30 or $200. Loop's recommendations are ranked by ingredients, fit for your skin, and your budget. Never by what pays us more. If the cheap one works, Loop says so.</p>
+      </details>
+      <details>
+        <summary>Is the free plan actually usable?</summary>
+        <p>Yes — it's the complete stack engine: unlimited daily tracking, the step-by-step runner and all themes. Your data stays on your device. Paid plans add cloud sync and Loop.</p>
+      </details>
+      <details>
+        <summary>What's the difference between Standard and Professional Loop?</summary>
+        <p>On Standard, Loop responds when you ask. On Professional, Loop also works unprompted — noticing patterns, suggesting adjustments and checking in when your behaviour changes. Same brain, different level of initiative.</p>
+      </details>
+      <details>
+        <summary>Where is my data stored?</summary>
+        <p>Free plan data never leaves your device. On paid plans, data syncs through secure cloud infrastructure hosted in Australia, isolated per account. You can export or delete it at any time.</p>
+      </details>
+      <details>
+        <summary>Does Loop give medical or dermatological advice?</summary>
+        <p>No. Loop helps you run the routine you've chosen — ordering, scheduling, consistency. For skin conditions or reactions, see a professional.</p>
+      </details>
+      <details>
+        <summary>Which platforms are supported?</summary>
+        <p>iOS and Android, with the same account and sync on both. A browser version for desktop is on the way.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── FINAL CTA ───────── -->
+<section class="final">
+  <div class="wrap">
+    <span class="eyebrow">Ready when you are</span>
+    <h2>Close tonight's <em>loop.</em></h2>
+    <p>Download The Stack and build your first routine in under five minutes.</p>
+    <div class="hero-ctas" style="justify-content:center">
+      <a class="btn btn-cu" href="#">Download for iOS</a>
+      <a class="btn btn-ghost" href="#">Get it on Android</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap frow">
+    <span class="logo" style="font-size:16px">The <em>Stack</em></span>
+    <div class="flinks">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a>
+    </div>
+    <span>© 2026 The Stack. Made in Melbourne.</span>
+  </div>
+</footer>
+
+<script>
+// Theme data mirrors the app's real token system (dark values)
+const THEMES=[
+  {k:'copper', n:'Copper',  cu:'#b87040', deep:'#8c5430', btn:'#7a4828', rgb:'184,112,64',  bg:'#121418', raise:'#191c22', card:'#1e2128', edge:'#2c303a'},
+  {k:'sage',   n:'Sage',    cu:'#8fae94', deep:'#71937a', btn:'#4e6b55', rgb:'143,174,148', bg:'#121614', raise:'#181d1a', card:'#1c221e', edge:'#2a332c'},
+  {k:'blush',  n:'Blush',   cu:'#dda3b6', deep:'#c2879c', btn:'#8f4f68', rgb:'221,163,182', bg:'#171316', raise:'#1e181c', card:'#221b20', edge:'#342a31'},
+  {k:'heather',n:'Heather', cu:'#a493c9', deep:'#8676a8', btn:'#5f5280', rgb:'164,147,201', bg:'#131218', raise:'#191822', card:'#1d1c26', edge:'#2d2b3a'},
+  {k:'steel',  n:'Steel',   cu:'#6f9ad6', deep:'#5580bd', btn:'#3d5f96', rgb:'111,154,214', bg:'#111318', raise:'#171a21', card:'#1b1f27', edge:'#2a303c'},
+  {k:'amber',  n:'Amber',   cu:'#dcb650', deep:'#bd9a3a', btn:'#8f7220', rgb:'220,182,80',  bg:'#161410', raise:'#1d1a13', card:'#221e16', edge:'#352f22'}
+];
+const chips=document.getElementById('chips');
+THEMES.forEach((t,i)=>{
+  const b=document.createElement('button');
+  b.className='chip'+(i===0?' on':'');
+  b.style.background=t.cu;
+  b.setAttribute('aria-label','Preview '+t.n+' theme');
+  b.onclick=()=>setTheme(i,true);
+  chips.appendChild(b);
+});
+let cur=0,auto=setInterval(()=>setTheme((cur+1)%THEMES.length,false),4200);
+function setTheme(i,manual){
+  cur=i;const t=THEMES[i],r=document.documentElement.style;
+  r.setProperty('--cu',t.cu);r.setProperty('--cu-deep',t.deep);
+  r.setProperty('--cu-btn',t.btn);r.setProperty('--cu-rgb',t.rgb);
+  document.querySelectorAll('.chip').forEach((c,j)=>c.classList.toggle('on',j===i));
+  const ph=document.querySelector('.phone'),sc=document.querySelector('.phone-screen');
+  ph.style.background=t.raise;ph.style.borderColor=t.edge;sc.style.background=t.bg;
+  document.querySelectorAll('.ph-card').forEach(c=>{c.style.background=t.card;c.style.borderColor=t.edge});
+  if(manual){clearInterval(auto);auto=setInterval(()=>setTheme((cur+1)%THEMES.length,false),5200);}
+}
+// theme tiles
+document.getElementById('themeTiles').innerHTML=THEMES.map(t=>`
+  <div class="theme-tile" style="background:${t.card};border-color:${t.edge};color:#edeae6">
+    <div class="swatch" style="background:${t.cu}"></div>
+    <div class="t-name">${t.n}</div>
+    <div class="t-sub">Dark · Light</div>
+  </div>`).join('');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)clearInterval(auto);
+
+// Signature: loop rings draw closed on scroll, staggered
+const cards=[...document.querySelectorAll('[data-loop]')];
+if('IntersectionObserver'in window){
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const idx=cards.indexOf(e.target);
+        setTimeout(()=>e.target.classList.add('closed'),idx*260);
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.45});
+  cards.forEach(c=>io.observe(c));
+}else{
+  cards.forEach(c=>c.classList.add('closed'));
+}
+</script>
+</body>
+</html>
